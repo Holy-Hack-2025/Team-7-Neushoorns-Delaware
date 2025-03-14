@@ -20,6 +20,12 @@
 <body>
     <h2>My Google Map</h2>
     <iframe id="mapFrame" width="600" height="450" frameborder="0" style="border:0"></iframe>
+    <div id="travel-info"></div>
+    <div id="map-container"></div>
+    
+    
+    
+    
     <script>
         function setMapSrc(origin, destination, waypoints, mode) {
             const apiKey = 'AIzaSyAiNShtoakde7DND2RWroZLuRIwb5isgT8';
@@ -28,8 +34,8 @@
             document.getElementById('mapFrame').src = src;
         }
 
-        // Example usage:
-        setMapSrc('New York, NY', 'Los Angeles, CA', ['Chicago, IL', 'Dallas, TX'], 'driving');
+        setMapSrc('antwerpen', 'kortenberg', ['zaventem', 'nossegem'], 'driving');
+        
     </script>
 </body>
 </body>
