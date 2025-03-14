@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 let map, directionsService, directionsRenderer;
 const api_Key = 'AIzaSyAiNShtoakde7DND2RWroZLuRIwb5isgT8';
 function initMap() {
@@ -15,7 +13,6 @@ function initMap() {
 
 
 
->>>>>>> origin/main
 function setMapSrc(origin, destination, waypoints, mode) {
     const apiKey = 'AIzaSyAiNShtoakde7DND2RWroZLuRIwb5isgT8';
     const baseUrl = 'https://www.google.com/maps/embed/v1/directions';
