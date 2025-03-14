@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Hotspots</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .hotspot-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .hotspot-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+        }
+        .hotspot-item button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Hotspots</h1>
+    <input type="text" id="placeName" placeholder="Enter place name">
+    <button onclick="addHotspot()">Add Hotspot</button>
+    <div id="hotspotContainer" class="hotspot-box"></div>
+
+    <script>
+        const username = localStorage.getItem("loggedInUser"); // Get current logged-in user
+        if (!username) {
+            alert("No user is logged in! Please log in first.");
+            window.location.href = "login.html"; // Redirect to login if no user is logged in
+        }
+
+        document.addEventListener('DOMContentLoaded', loadHotspots);
+
+        function addHotspot() {
+            const placeNameInput = document.getElementById('placeName');
+            const placeName = placeNameInput.value.trim();
+            if (placeName) {
+                const hotspotContainer = document.getElementById('hotspotContainer');
+                const hotspotItem = document.createElement('div');
+                hotspotItem.className = 'hotspot-item';
+                hotspotItem.innerHTML = `
+                    <span>${placeName}</span>
+                    <button onclick="deleteHotspot(this)">Delete</button>
+                `;
+                hotspotContainer.appendChild(hotspotItem);
+                
+                saveHotspot(placeName);
+                placeNameInput.value = '';
+            }
+        }
+
+        function deleteHotspot(button) {
+            const hotspotItem = button.parentElement;
+            const placeName = hotspotItem.querySelector('span').textContent;
+            hotspotItem.remove();
+            removeHotspot(placeName);
+        }
+
+        function saveHotspot(placeName) {
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let user = users.find(u => u.username === username); // Find the logged-in user
+
+            if (user) {
+                // Initialize hotspots array if it doesn't exist
+                if (!user.hotspots) {
+                    user.hotspots = [];
+                }
+                user.hotspots.push(placeName); // Add the new hotspot
+
+                // Save the updated users list back to localStorage
+                localStorage.setItem("users", JSON.stringify(users));
+            }
+        }
+
+        function removeHotspot(placeName) {
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let user = users.find(u => u.username === username); // Find the logged-in user
+
+            if (user && user.hotspots) {
+                // Remove the hotspot from the user's list
+                user.hotspots = user.hotspots.filter(hotspot => hotspot !== placeName);
+
+                // Save the updated users list back to localStorage
+                localStorage.setItem("users", JSON.stringify(users));
+            }
+        }
+
+        function loadHotspots() {
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let user = users.find(u => u.username === username); // Find the logged-in user
+
+            if (user && user.hotspots) {
+                const hotspotContainer = document.getElementById('hotspotContainer');
+                user.hotspots.forEach(placeName => {
+                    const hotspotItem = document.createElement('div');
+                    hotspotItem.className = 'hotspot-item';
+                    hotspotItem.innerHTML = `
+                        <span>${placeName}</span>
+                        <button onclick="deleteHotspot(this)">Delete</button>
+                    `;
+                    hotspotContainer.appendChild(hotspotItem);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
