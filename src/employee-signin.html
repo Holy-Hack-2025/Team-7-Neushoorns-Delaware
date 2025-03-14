@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Sign-In</title>
+    <title>Employee Sign-In</title>
 </head>
 <body>
     <form id="signinForm">
-        <h2>Admin Sign-In</h2>
+        <h2>Employee Sign-In</h2>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
         <label for="password">Password:</label>
@@ -18,7 +18,7 @@
     <script>
         // Example database of users
         const usersDatabase = [
-            { username: 'admin', password: 'admin' },
+            { username: 'employee1', password: 'password1' },
             { username: 'john', password: 'doe' },
             { username: 'jane', password: 'smith' }
         ];
@@ -30,7 +30,7 @@
             const user = usersDatabase.find(user => user.username === username && user.password === password);
 
             if (user) {
-                window.location.href = 'admin/index.html';
+                window.location.href = 'employee/index.html';
             } else {
                 alert('Invalid username or password.');
             }
