@@ -1,0 +1,21 @@
+body {
+    font-family: Arial, sans-serif;
+}
+.hotspot-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+}
+.hotspot-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+.hotspot-item button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}

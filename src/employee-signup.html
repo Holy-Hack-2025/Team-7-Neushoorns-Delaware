@@ -8,7 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             background-image: url('../docs/index/rosap.jpg');
-            background-size: 112%; /* Adjust the size of the background image */
+            background-size: 112%;
             background-position: center;
             margin: 0;
             padding: 0;
@@ -26,9 +26,8 @@
         .signup-form h2 {
             margin-bottom: 20px;
         }
-        .signup-form input[type="text"],
-        .signup-form input[type="password"],
-        .signup-form input[type="submit"] {
+        .signup-form input,
+        .signup-form select {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -47,7 +46,7 @@
     </style>
 </head>
 <body>
-    <form class="signup-form" onsubmit="return validateForm()">
+    <form class="signup-form" onsubmit="return saveUser(event)">
         <h2>Employee Sign-Up</h2>
         <label for="role">Role:</label>
         <select name="role" id="role" required>
@@ -59,15 +58,37 @@
         <input type="password" name="confirm-password" placeholder="Confirm Password" required>
         <input type="submit" value="Sign Up">
     </form>
+
     <script>
-        function validateForm() {
+        function saveUser(event) {
+            event.preventDefault();
+
+            var username = document.querySelector('input[name="username"]').value;
             var password = document.querySelector('input[name="password"]').value;
             var confirmPassword = document.querySelector('input[name="confirm-password"]').value;
+            var role = document.querySelector('#role').value;
+
             if (password !== confirmPassword) {
                 alert("Passwords do not match.");
                 return false;
             }
-            return true;
+
+            var user = { username, password, role };
+
+            var users = JSON.parse(localStorage.getItem("users")) || [];
+            users.push(user);
+
+            localStorage.setItem("users", JSON.stringify(users));
+
+            if (role === "admin") {
+                window.location.href = "admin-signin.html";
+            } else {
+                window.location.href = "employee-signin.html";
+            }
+
+            alert("User signed up successfully!");
+            document.querySelector(".signup-form").reset();
+            return false;
         }
     </script>
 </body>
