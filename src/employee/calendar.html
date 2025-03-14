@@ -5,23 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bus Usage Selector</title>
     <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
         .calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            max-height: 300px;
+            gap: 5px;
+            max-height: 200px;
             overflow-y: scroll;
             border: 1px solid #ccc;
-            padding: 10px;
+            padding: 5px;
+            background-color: #fff;
         }
         .day {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #f9f9f9;
+            background-color: #e0f7fa;
         }
         .month-selector {
             margin-bottom: 20px;
@@ -41,12 +51,26 @@
     <div class="month-selector">
         <label for="month">Select Month:</label>
         <select id="month" onchange="generateDays()">
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #e0f7fa; /* Blue background */
+        }
+    </style>
+</head>
+<body>
+    <h1>Select Days to Use the Bus</h1>
+    <div class="month-selector">
+        <label for="month">Select Month:</label>
+        <select id="month" onchange="generateDays()">
             <!-- Months will be populated dynamically -->
         </select>
     </div>
     <form id="busUsageForm" class="calendar">
         <!-- Days will be generated here -->
     </form>
+   
     <button type="button" onclick="saveBusUsage()">Save</button>
     <button type="button" onclick="window.location.href='index.html'">Back</button>
     <script>
