@@ -23,19 +23,48 @@
             border-radius: 5px;
             background-color: #f9f9f9;
         }
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            text-align: center;
+            font-weight: bold;
+            background-color: #e0e0e0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .weekday {
+            color: #007bff;
+        }
+        .weekend {
+            color: #ff0000;
+        }
     </style>
 </head>
 <body>
     <h1>Select Days to Use the Bus</h1>
+    <div class="calendar-header">
+        <div class="weekday">Mon</div>
+        <div class="weekday">Tue</div>
+        <div class="weekday">Wed</div>
+        <div class="weekday">Thu</div>
+        <div class="weekday">Fri</div>
+        <div class="weekend">Sat</div>
+        <div class="weekend">Sun</div>
+    </div>
     <form id="busUsageForm" class="calendar">
         <!-- Days will be generated here -->
     </form>
     <button type="button" onclick="saveBusUsage()">Save</button>
 
     <script>
-        function generateDays() {
+        function generateDaysForSelectedMonth() {
             const form = document.getElementById('busUsageForm');
-            const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+            form.innerHTML = ''; // Clear previous days
+            const monthSelector = document.getElementById('monthSelector');
+            const selectedMonth = parseInt(monthSelector.value);
+            const daysInMonth = new Date(new Date().getFullYear(), selectedMonth + 1, 0).getDate();
             for (let day = 1; day <= daysInMonth; day++) {
                 const label = document.createElement('label');
                 label.className = 'day';
@@ -75,17 +104,98 @@
                 return;
             }
 
-            generateDays();
+            generateDaysForSelectedMonth();
 
             let users = JSON.parse(localStorage.getItem("users")) || [];
             let user = users.find(user => user.username === username);
 
             if (user && user.busUsage) {
-                user.busUsage.forEach(day => {
-                    document.querySelector(`input[value="${day}"]`).checked = true;
-                });
+                const monthSelector = document.getElementById('monthSelector');
+                const selectedMonth = parseInt(monthSelector.value);
+                if (user.busUsage[selectedMonth]) {
+                    user.busUsage[selectedMonth].forEach(day => {
+                        document.querySelector(`input[value="${day}"]`).checked = true;
+                    });
+                }
             }
         };
     </script>
 </body>
 </html>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        text-align: center;
+        color: #444;
+    }
+    button {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    .month-selector-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    #monthSelector {
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        font-size: 16px;
+    }
+</style>
+<div class="month-selector-container">
+    <label for="monthSelector">Select Month:</label>
+    <select id="monthSelector" onchange="generateDaysForSelectedMonth()">
+        <option value="0">January</option>
+        <option value="1">February</option>
+        <option value="2">March</option>
+        <option value="3">April</option>
+        <option value="4">May</option>
+        <option value="5">June</option>
+        <option value="6">July</option>
+        <option value="7">August</option>
+        <option value="8">September</option>
+        <option value="9">October</option>
+        <option value="10">November</option>
+        <option value="11">December</option>
+    </select>
+</div>
+<script>
+    function generateDaysForSelectedMonth() {
+        const form = document.getElementById('busUsageForm');
+        form.innerHTML = ''; // Clear previous days
+        const monthSelector = document.getElementById('monthSelector');
+        const selectedMonth = parseInt(monthSelector.value);
+        const daysInMonth = new Date(new Date().getFullYear(), selectedMonth + 1, 0).getDate();
+        const firstDayOfMonth = new Date(new Date().getFullYear(), selectedMonth, 1).getDay();
+        const offset = (firstDayOfMonth + 6) % 7; // Adjust to start week on Monday
+
+        for (let i = 0; i < offset; i++) {
+            const emptyCell = document.createElement('div');
+            form.appendChild(emptyCell);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const label = document.createElement('label');
+            label.className = 'day';
+            label.innerHTML = `<input type="checkbox" name="days" value="${day}"> ${day}`;
+            form.appendChild(label);
+        }
+    }
+</script></script>
