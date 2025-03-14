@@ -5,54 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Hotspots</title>
     <style>
-        .hotspot {
-            margin: 10px 0;
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .hotspot-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hotspot-list div {
+            margin: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Select up to 3 Hotspots</h1>
-    <form id="hotspotForm">
-        <div id="hotspotList"></div>
-        <button type="submit">Submit</button>
-    </form>
+    <h1>Select Your Hotspots</h1>
+    <div class="hotspot-list" id="hotspotList">
+        <!-- Hotspots will be added here dynamically -->
+    </div>
+    <button onclick="submitSelection()">Submit Selection</button>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const admins = JSON.parse(localStorage.getItem("users")) || [];
-            const hotspotList = document.getElementById("hotspotList");
-            let allHotspots = new Set();
-
-            admins.forEach(admin => {
-                if (admin.role === "admin" && admin.hotspots) {
-                    admin.hotspots.forEach(hotspot => allHotspots.add(hotspot));
+        function loadHotspots() {
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const hotspots = [];
+            users.forEach(user => {
+                if (user.role === 'admin' && user.hotspots) {
+                    hotspots.push(...user.hotspots);
                 }
             });
+            const uniqueHotspots = [...new Set(hotspots)]; // Remove duplicates
 
-            allHotspots.forEach((hotspot, index) => {
-                const hotspotDiv = document.createElement("div");
-                hotspotDiv.classList.add("hotspot");
-                hotspotDiv.innerHTML = `
-                    <input type="checkbox" id="hotspot${index}" name="hotspot" value="${hotspot}">
-                    <label for="hotspot${index}">${hotspot}</label>
+            const hotspotList = document.getElementById("hotspotList");
+            uniqueHotspots.forEach(hotspot => {
+                const div = document.createElement("div");
+                div.innerHTML = `
+                    <input type="checkbox" id="${hotspot}" name="hotspot" value="${hotspot}">
+                    <label for="${hotspot}">${hotspot}</label>
                 `;
-                hotspotList.appendChild(hotspotDiv);
+                hotspotList.appendChild(div);
             });
-        });
+        }
 
-        document.getElementById("hotspotForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-            const checkedBoxes = document.querySelectorAll('input[name="hotspot"]:checked');
+        function submitSelection() {
+            const selectedHotspots = [];
+            document.querySelectorAll('input[name="hotspot"]:checked').forEach(checkbox => {
+                selectedHotspots.push(checkbox.value);
+            });
 
-            if (checkedBoxes.length > 3) {
+            if (selectedHotspots.length > 3) {
                 alert("You can only select up to 3 hotspots.");
                 return;
             }
 
-            const selectedHotspots = Array.from(checkedBoxes).map(box => box.value);
-            localStorage.setItem("selectedHotspots", JSON.stringify(selectedHotspots));
-            alert("Hotspots saved successfully!");
-        });
+            // Get the current user from localStorage
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            if (!currentUser) {
+                alert("No user is currently logged in.");
+                return;
+            }
+
+            // Get all users from localStorage
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+
+            // Update the selectedHotspots for the current user
+            const updatedUsers = users.map(user => {
+                if (user.username === currentUser.username) {
+                    user.selectedHotspots = selectedHotspots; // Update selectedHotspots
+                }
+                return user;
+            });
+
+            // Save the updated users back to localStorage
+            localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+            alert("Hotspots selected successfully!");
+            window.location.href = "view_users.html"; // Redirect back to the users page
+        }
+
+        window.onload = loadHotspots;
     </script>
 </body>
 </html>
