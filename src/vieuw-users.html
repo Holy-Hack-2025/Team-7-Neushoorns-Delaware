@@ -60,6 +60,7 @@
                     <th>Username</th>
                     <th>Password</th>
                     <th>Bus Usage Days</th>
+                    <th>Selected Hotspots</th> <!-- New column -->
                 </tr>
             </thead>
             <tbody id="usersTableBody">
@@ -110,10 +111,15 @@
                     <td>${user.password}</td>
                     <td>${user.busUsage ? user.busUsage.join(", ") : "None"}</td>
                 `;
+
+                // Add selected hotspots column for users
+                const selectedHotspotsCell = document.createElement("td");
+                selectedHotspotsCell.innerText = user.selectedHotspots ? user.selectedHotspots.join(", ") : "None";
+                row.appendChild(selectedHotspotsCell);
+
                 if (user.role === 'admin') {
                     // Add hotspots column for admins
                     const hotspotsCell = document.createElement("td");
-                    console.log("user hotspots:", user.hotspots);
                     hotspotsCell.innerText = user.hotspots && (user.hotspots.length > 0) ? user.hotspots.join(", ") : "None";
                     row.appendChild(hotspotsCell);
                     adminsTableBody.appendChild(row);
