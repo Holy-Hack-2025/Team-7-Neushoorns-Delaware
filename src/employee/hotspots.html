@@ -4,21 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Hotspots</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        .hotspot-list {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .hotspot-list div {
-            margin: 10px;
-        }
-    </style>
 </head>
 <body>
     <h1>Select Your Hotspots</h1>
@@ -60,9 +45,11 @@
                 return;
             }
 
-            // Get the current user from localStorage
-            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-            if (!currentUser) {
+            // Retrieve the current user from localStorage
+            const username = localStorage.getItem("loggedInUser");
+            console.log("Current user:", username); // Debugging
+
+            if (!username) {
                 alert("No user is currently logged in.");
                 return;
             }
@@ -72,7 +59,7 @@
 
             // Update the selectedHotspots for the current user
             const updatedUsers = users.map(user => {
-                if (user.username === currentUser.username) {
+                if (user.username === username) {
                     user.selectedHotspots = selectedHotspots; // Update selectedHotspots
                 }
                 return user;
@@ -82,7 +69,8 @@
             localStorage.setItem("users", JSON.stringify(updatedUsers));
 
             alert("Hotspots selected successfully!");
-            window.location.href = "view_users.html"; // Redirect back to the users page
+            console.log("Redirecting to view_users.html"); // Debugging
+            window.location.href = "index.html"; // Ensure this path is correct
         }
 
         window.onload = loadHotspots;
