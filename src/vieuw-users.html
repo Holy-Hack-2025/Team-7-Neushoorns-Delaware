@@ -60,6 +60,7 @@
                     <th>Username</th>
                     <th>Password</th>
                     <th>Bus Usage Days</th>
+                    <th>Selected Hotspots</th>
                 </tr>
             </thead>
             <tbody id="usersTableBody">
@@ -111,17 +112,25 @@
                     <td>${user.busUsage ? user.busUsage.join(", ") : "None"}</td>
                 `;
                 if (user.role === 'admin') {
+                    // Ensure hotspots is always an array
+                    user.hotspots = user.hotspots || [];
                     // Add hotspots column for admins
                     const hotspotsCell = document.createElement("td");
-                    console.log("user hotspots:", user.hotspots);
-                    hotspotsCell.innerText = user.hotspots && (user.hotspots.length > 0) ? user.hotspots.join(", ") : "None";
+                    hotspotsCell.innerText = user.hotspots.length > 0 ? user.hotspots.join(", ") : "None";
                     row.appendChild(hotspotsCell);
                     adminsTableBody.appendChild(row);
                 } else {
+                    // Ensure selectedHotspots is always an array
+                    user.selectedHotspots = user.selectedHotspots || [];
+                    // Add selected hotspots column for users
+                    const selectedHotspotsCell = document.createElement("td");
+                    selectedHotspotsCell.innerText = user.selectedHotspots.length > 0 ? user.selectedHotspots.join(", ") : "None";
+                    row.appendChild(selectedHotspotsCell);
                     usersTableBody.appendChild(row);
                 }
             });
         }
+        
 
         window.onload = loadUsers;
     </script>
