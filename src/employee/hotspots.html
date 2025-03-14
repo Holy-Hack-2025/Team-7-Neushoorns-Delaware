@@ -27,7 +27,7 @@
             const hotspotList = document.getElementById("hotspotList");
             uniqueHotspots.forEach(hotspot => {
                 const div = document.createElement("div");
-                div.innerHTML = `
+                div.innerHTML = ` 
                     <input type="radio" id="${hotspot}" name="hotspot" value="${hotspot}">
                     <label for="${hotspot}">${hotspot}</label>
                 `;
@@ -41,8 +41,9 @@
                 selectedHotspots.push(checkbox.value);
             });
 
-            if (selectedHotspots.length > 3) {
-                alert("You can only select up to 3 hotspots.");
+            // Ensure only one hotspot is selected
+            if (selectedHotspots.length !== 1) {
+                alert("You can only select one hotspot.");
                 return;
             }
 
@@ -69,7 +70,7 @@
             // Save the updated users back to localStorage
             localStorage.setItem("users", JSON.stringify(updatedUsers));
 
-            alert("Hotspots selected successfully!");
+            alert("Hotspot selected successfully!");
             console.log("Redirecting to view_users.html"); // Debugging
             window.location.href = "index.html"; // Ensure this path is correct
         }
