@@ -45,15 +45,6 @@
             background-color: #007BFF;
             color: white;
         }
-        .date-picker {
-            margin-bottom: 20px;
-        }
-        .hotspot-counter {
-            margin-top: 20px;
-        }
-        .hotspot-counter table {
-            width: 50%;
-        }
     </style>
 </head>
 <body>
@@ -63,14 +54,12 @@
         <div class="tab" onclick="showTab('admins')">Admins</div>
     </div>
     <div id="users" class="tab-content active">
-        <div class="date-picker">
-            <label for="date">Select Date: </label>
-            <input type="date" id="date" onchange="filterUsersByDate()">
-        </div>
         <table>
             <thead>
                 <tr>
                     <th>Username</th>
+                    <th>Password</th>
+                    <th>Bus Usage Days</th>
                     <th>Selected Hotspots</th>
                 </tr>
             </thead>
@@ -78,26 +67,14 @@
                 <!-- Users will be added here dynamically -->
             </tbody>
         </table>
-        <div class="hotspot-counter">
-            <h2>Hotspot Count for Selected Date</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hotspot</th>
-                        <th>Number of Clients</th>
-                    </tr>
-                </thead>
-                <tbody id="hotspotCounterBody">
-                    <!-- Hotspot counts will be added here dynamically -->
-                </tbody>
-            </table>
-        </div>
     </div>
     <div id="admins" class="tab-content">
         <table>
             <thead>
                 <tr>
                     <th>Username</th>
+                    <th>Password</th>
+                    <th>Bus Usage Days</th>
                     <th>Hotspots</th>
                 </tr>
             </thead>
@@ -106,7 +83,7 @@
             </tbody>
         </table>
     </div>
-    <button type="button" onclick="window.location.href='index.html'">Back</button>
+
     <script>
         function showTab(tabId) {
             document.querySelectorAll('.tab').forEach(tab => {
@@ -129,64 +106,31 @@
 
             users.forEach(user => {
                 const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.password}</td>
+                    <td>${user.busUsage ? user.busUsage.join(", ") : "None"}</td>
+                `;
                 if (user.role === 'admin') {
+                    // Ensure hotspots is always an array
                     user.hotspots = user.hotspots || [];
-                    row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.hotspots.length > 0 ? user.hotspots.join(", ") : "None"}</td>
-                    `;
+                    // Add hotspots column for admins
+                    const hotspotsCell = document.createElement("td");
+                    hotspotsCell.innerText = user.hotspots.length > 0 ? user.hotspots.join(", ") : "None";
+                    row.appendChild(hotspotsCell);
                     adminsTableBody.appendChild(row);
                 } else {
+                    // Ensure selectedHotspots is always an array
                     user.selectedHotspots = user.selectedHotspots || [];
-                    row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.selectedHotspots.length > 0 ? user.selectedHotspots.join(", ") : "None"}</td>
-                    `;
+                    // Add selected hotspots column for users
+                    const selectedHotspotsCell = document.createElement("td");
+                    selectedHotspotsCell.innerText = user.selectedHotspots.length > 0 ? user.selectedHotspots.join(", ") : "None";
+                    row.appendChild(selectedHotspotsCell);
                     usersTableBody.appendChild(row);
                 }
             });
         }
-
-        function filterUsersByDate() {
-            const selectedDate = document.getElementById("date").value;
-            const users = JSON.parse(localStorage.getItem("users")) || [];
-            const usersTableBody = document.getElementById("usersTableBody");
-            const hotspotCounterBody = document.getElementById("hotspotCounterBody");
-
-            usersTableBody.innerHTML = ""; // Clear previous entries
-            hotspotCounterBody.innerHTML = ""; // Clear previous hotspot counts
-
-            const hotspotCounts = {}; // Object to count hotspots
-
-            users.forEach(user => {
-                if (user.busUsage && user.busUsage.includes(selectedDate)) {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.selectedHotspots ? user.selectedHotspots.join(", ") : "None"}</td>
-                    `;
-                    usersTableBody.appendChild(row);
-
-                    if (user.selectedHotspots) {
-                        user.selectedHotspots.forEach(hotspot => {
-                            if (!hotspotCounts[hotspot]) {
-                                hotspotCounts[hotspot] = 0;
-                            }
-                            hotspotCounts[hotspot]++;
-                        });
-                    }
-                }
-            });
-
-            for (const [hotspot, count] of Object.entries(hotspotCounts)) {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${hotspot}</td>
-                    <td>${count}</td>
-                `;
-                hotspotCounterBody.appendChild(row);
-            }
-        }
+        
 
         window.onload = loadUsers;
     </script>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Hotspots</title>
+</head>
+<body>
+    <h1>Select Your Hotspots</h1>
+    <div class="hotspot-list" id="hotspotList">
+        <!-- Hotspots will be added here dynamically -->
+    </div>
+    <button onclick="submitSelection()">Submit Selection</button>
+    <button type="button" onclick="window.location.href='index.html'">Back</button>
+
+    <script>
+        function loadHotspots() {
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const hotspots = [];
+            users.forEach(user => {
+                if (user.role === 'admin' && user.hotspots) {
+                    hotspots.push(...user.hotspots);
+                }
+            });
+            const uniqueHotspots = [...new Set(hotspots)]; // Remove duplicates
+
+            const hotspotList = document.getElementById("hotspotList");
+            uniqueHotspots.forEach(hotspot => {
+                const div = document.createElement("div");
+                div.innerHTML = ` 
+                    <input type="radio" id="${hotspot}" name="hotspot" value="${hotspot}">
+                    <label for="${hotspot}">${hotspot}</label>
+                `;
+                hotspotList.appendChild(div);
+            });
+        }
+
+        function submitSelection() {
+            const selectedHotspots = [];
+            document.querySelectorAll('input[name="hotspot"]:checked').forEach(checkbox => {
+                selectedHotspots.push(checkbox.value);
+            });
+
+            // Ensure only one hotspot is selected
+            if (selectedHotspots.length !== 1) {
+                alert("You can only select one hotspot.");
+                return;
+            }
+
+            // Retrieve the current user from localStorage
+            const username = localStorage.getItem("loggedInUser");
+            console.log("Current user:", username); // Debugging
+
+            if (!username) {
+                alert("No user is currently logged in.");
+                return;
+            }
+
+            // Get all users from localStorage
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+
+            // Update the selectedHotspots for the current user
+            const updatedUsers = users.map(user => {
+                if (user.username === username) {
+                    user.selectedHotspots = selectedHotspots; // Update selectedHotspots
+                }
+                return user;
+            });
+
+            // Save the updated users back to localStorage
+            localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+            alert("Hotspot selected successfully!");
+            console.log("Redirecting to view_users.html"); // Debugging
+            window.location.href = "index.html"; // Ensure this path is correct
+        }
+
+        window.onload = loadHotspots;
+    </script>
+</body>
+</html>

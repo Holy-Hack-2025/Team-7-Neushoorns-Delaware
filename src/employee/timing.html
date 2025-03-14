@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Timing</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Employee Timing</h1>
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Hotspot</th>
+                    <th>Start Time</th>
+                </tr>
+            </thead>
+            <tbody id="timetable-body">
+                <!-- Data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+
+    <script>
+        const timetableData = [
+            { date: '2025-03-16', hotspot: 'Tienen', startTime: '09:00'},
+            { date: '2025-03-16', hotspot: 'Haasrode', startTime: '09:15' },
+            // Add more data as needed
+        ];
+
+        const timetableBody = document.getElementById('timetable-body');
+
+        timetableData.forEach(entry => {
+            const row = document.createElement('tr');
+
+            const dateCell = document.createElement('td');
+            dateCell.textContent = entry.date;
+            row.appendChild(dateCell);
+
+            const hotspotCell = document.createElement('td');
+            hotspotCell.textContent = entry.hotspot;
+            row.appendChild(hotspotCell);
+
+            const startTimeCell = document.createElement('td');
+            startTimeCell.textContent = entry.startTime;
+            row.appendChild(startTimeCell);
+
+            timetableBody.appendChild(row);
+        });
+    </script>
+</body>
+
+</html>

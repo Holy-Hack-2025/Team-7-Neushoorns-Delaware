@@ -19,25 +19,23 @@
 </head>
 <body>
     <h2>My Google Map</h2>
-    <iframe id="mapFrame" width="600" height="450" frameborder="0" style="border:0"></iframe>
+    <iframe id="mapFrame" width="600" height="450" frameborder="0" style="border:0" title="neushoorn maps"></iframe>
     <div id="travel-info"></div>
     <div id="map-container"></div>
     
     
     
-    
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiNShtoakde7DND2RWroZLuRIwb5isgT8&callback=initMap"></script>
+    <script src="map.js"></script>
     <script>
-        function setMapSrc(origin, destination, waypoints, mode) {
-            const apiKey = 'AIzaSyAiNShtoakde7DND2RWroZLuRIwb5isgT8';
-            const baseUrl = 'https://www.google.com/maps/embed/v1/directions';
-            const src = `${baseUrl}?key=${apiKey}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&waypoints=${encodeURIComponent(waypoints.join('|'))}&mode=${mode}`;
-            document.getElementById('mapFrame').src = src;
-        }
+
+        // Usage Example
+        getTravelTime("antwerpen", "kortenberg", api_Key)
+            .then(time => console.log(`Travel Time: ${time} minutes`))
+            .catch(error => console.error(error));
 
         setMapSrc('antwerpen', 'kortenberg', ['zaventem', 'nossegem'], 'driving');
-        
     </script>
-</body>
 </body>
 
 </html>

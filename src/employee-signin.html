@@ -4,42 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Sign-In</title>
-</head>
-<body>
-    <form id="signinForm">
-        <h2>Employee Sign-In</h2>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <button type="button" onclick="authenticate()">Sign In</button>
-    </form>
-
-    <script>
-        // Example database of users
-        const usersDatabase = [
-            { username: 'employee1', password: 'password1' },
-            { username: 'john', password: 'doe' },
-            { username: 'jane', password: 'smith' }
-        ];
-
-        function authenticate() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            const user = usersDatabase.find(user => user.username === username && user.password === password);
-
-            if (user) {
-                window.location.href = 'employee/index.html';
-            } else {
-                alert('Invalid username or password.');
-            }
-        }
-    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: url('../docs/index/maninbus.jpg') no-repeat center center fixed;
+            background-size: 130%;
             margin: 0;
             padding: 0;
             display: flex;
@@ -53,9 +22,9 @@
         }
 
         form {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.8);
             padding: 20px;
-            padding-right: 40px; /* Added padding to the right */
+            padding-right: 40px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 400px;
@@ -93,5 +62,37 @@
             background-color: #0056b3;
         }
     </style>
+</head>
+<body>
+    <form id="signinForm">
+        <h2>Employee Sign-In</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="button" onclick="authenticate()">Sign In</button>
+    </form>
+
+    <script>
+        function authenticate() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Load users from localStorage
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+
+            // Find user in database
+            const user = users.find(user => user.username === username && user.password === password);
+
+            if (user) {
+                localStorage.setItem("loggedInUser", username); // Store logged-in user
+                alert("Login successful!");
+                window.location.href = 'employee/index.html';
+            } else {
+                alert("Invalid username or password.");
+            }
+        }
+
+    </script>
 </body>
 </html>

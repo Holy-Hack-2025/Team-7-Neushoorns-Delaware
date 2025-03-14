@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Admins</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        .hotspot-box {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .hotspot {
+            padding: 5px 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .hotspot button {
+            margin-left: 5px;
+            cursor: pointer;
+            border: none;
+            background: red;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .form-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .form-container input {
+            padding: 5px 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registered Admins</h1>
+    <div id="admins">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Hotspots</th>
+                </tr>
+            </thead>
+            <tbody id="adminsTableBody">
+                <!-- Admins will be added here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-container">
+        <h2>Add Hotspot</h2>
+        <input type="text" id="newHotspot" placeholder="New Hotspot">
+        <button onclick="addHotspot()">Add Hotspot</button>
+    </div>
+    <button type="button" onclick="window.location.href='index.html'">Back</button>
+    <script>
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const adminsTableBody = document.getElementById("adminsTableBody");
+            adminsTableBody.innerHTML = "";
+
+            users.forEach(user => {
+                if (user.role === 'admin') {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${user.username}</td>
+                    `;
+
+                    const hotspotsCell = document.createElement("td");
+                    const hotspotBox = document.createElement("div");
+                    hotspotBox.classList.add("hotspot-box");
+
+                    (user.hotspots || []).forEach((hotspot, index) => {
+                        const hotspotElement = document.createElement("div");
+                        hotspotElement.classList.add("hotspot");
+                        hotspotElement.innerHTML = `
+                            ${hotspot} 
+                            <button onclick="removeHotspot('${user.username}', ${index})">X</button>
+                        `;
+                        hotspotBox.appendChild(hotspotElement);
+                    });
+
+                    hotspotsCell.appendChild(hotspotBox);
+                    row.appendChild(hotspotsCell);
+                    adminsTableBody.appendChild(row);
+                }
+            });
+        }
+
+        function addHotspot() {
+            const newHotspot = document.getElementById("newHotspot").value;
+
+            if (!newHotspot) {
+                alert("Please provide a hotspot.");
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const user = users.find(user => user.role === 'admin');
+
+            if (user) {
+                user.hotspots = user.hotspots || [];
+                user.hotspots.push(newHotspot);
+                localStorage.setItem("users", JSON.stringify(users));
+                document.getElementById("newHotspot").value = "";
+                loadUsers();
+            } else {
+                alert("Admin not found.");
+            }
+        }
+
+        function removeHotspot(username, index) {
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const user = users.find(user => user.username === username && user.role === 'admin');
+
+            if (user) {
+                user.hotspots.splice(index, 1);
+                localStorage.setItem("users", JSON.stringify(users));
+                loadUsers();
+            }
+        }
+
+        window.onload = loadUsers;
+    </script>
+</body>
+</html>
