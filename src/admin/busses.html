@@ -48,6 +48,12 @@
         .date-picker {
             margin-bottom: 20px;
         }
+        .hotspot-counter {
+            margin-top: 20px;
+        }
+        .hotspot-counter table {
+            width: 50%;
+        }
     </style>
 </head>
 <body>
@@ -65,8 +71,6 @@
             <thead>
                 <tr>
                     <th>Username</th>
-                    <th>Password</th>
-                    <th>Bus Usage Days</th>
                     <th>Selected Hotspots</th>
                 </tr>
             </thead>
@@ -74,14 +78,26 @@
                 <!-- Users will be added here dynamically -->
             </tbody>
         </table>
+        <div class="hotspot-counter">
+            <h2>Hotspot Count for Selected Date</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hotspot</th>
+                        <th>Number of Clients</th>
+                    </tr>
+                </thead>
+                <tbody id="hotspotCounterBody">
+                    <!-- Hotspot counts will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
     </div>
     <div id="admins" class="tab-content">
         <table>
             <thead>
                 <tr>
                     <th>Username</th>
-                    <th>Password</th>
-                    <th>Bus Usage Days</th>
                     <th>Hotspots</th>
                 </tr>
             </thead>
@@ -113,26 +129,23 @@
 
             users.forEach(user => {
                 const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${user.username}</td>
-                    <td>${user.password}</td>
-                    <td>${user.busUsage ? user.busUsage.join(", ") : "None"}</td>
-                `;
                 if (user.role === 'admin') {
                     // Ensure hotspots is always an array
                     user.hotspots = user.hotspots || [];
                     // Add hotspots column for admins
-                    const hotspotsCell = document.createElement("td");
-                    hotspotsCell.innerText = user.hotspots.length > 0 ? user.hotspots.join(", ") : "None";
-                    row.appendChild(hotspotsCell);
+                    row.innerHTML = `
+                        <td>${user.username}</td>
+                        <td>${user.hotspots.length > 0 ? user.hotspots.join(", ") : "None"}</td>
+                    `;
                     adminsTableBody.appendChild(row);
                 } else {
                     // Ensure selectedHotspots is always an array
                     user.selectedHotspots = user.selectedHotspots || [];
                     // Add selected hotspots column for users
-                    const selectedHotspotsCell = document.createElement("td");
-                    selectedHotspotsCell.innerText = user.selectedHotspots.length > 0 ? user.selectedHotspots.join(", ") : "None";
-                    row.appendChild(selectedHotspotsCell);
+                    row.innerHTML = `
+                        <td>${user.username}</td>
+                        <td>${user.selectedHotspots.length > 0 ? user.selectedHotspots.join(", ") : "None"}</td>
+                    `;
                     usersTableBody.appendChild(row);
                 }
             });
@@ -142,21 +155,43 @@
             const selectedDate = document.getElementById("date").value;
             const users = JSON.parse(localStorage.getItem("users")) || [];
             const usersTableBody = document.getElementById("usersTableBody");
+            const hotspotCounterBody = document.getElementById("hotspotCounterBody");
 
             usersTableBody.innerHTML = ""; // Clear previous entries
+            hotspotCounterBody.innerHTML = ""; // Clear previous hotspot counts
+
+            const hotspotCounts = {}; // Object to count hotspots
 
             users.forEach(user => {
                 if (user.busUsage && user.busUsage.includes(selectedDate)) {
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${user.username}</td>
-                        <td>${user.password}</td>
-                        <td>${user.busUsage.join(", ")}</td>
                         <td>${user.selectedHotspots ? user.selectedHotspots.join(", ") : "None"}</td>
                     `;
                     usersTableBody.appendChild(row);
+
+                    // Count hotspots for the selected date
+                    if (user.selectedHotspots) {
+                        user.selectedHotspots.forEach(hotspot => {
+                            if (!hotspotCounts[hotspot]) {
+                                hotspotCounts[hotspot] = 0;
+                            }
+                            hotspotCounts[hotspot]++;
+                        });
+                    }
                 }
             });
+
+            // Display hotspot counts
+            for (const [hotspot, count] of Object.entries(hotspotCounts)) {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${hotspot}</td>
+                    <td>${count}</td>
+                `;
+                hotspotCounterBody.appendChild(row);
+            }
         }
 
         window.onload = loadUsers;
