@@ -7,7 +7,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: url('../../docs/index/Customer.jpg') no-repeat center center;
+            background-size: cover;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,18 +18,22 @@
             height: 100vh;
         }
         .container {
-            background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            width: 100%;
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.8);
         }
         h1 {
             color: #333;
+            padding: 10px;
+            border-radius: 8px;
         }
         .btn {
-            display: inline-block;
-            margin: 10px;
+            display: block;
+            margin: 10px auto;
             padding: 10px 20px;
             font-size: 16px;
             color: #fff;
@@ -37,25 +42,16 @@
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
+            width: 80%;
         }
         .btn:hover {
             background-color: #0056b3;
-        }
-        .customer-image {
-            max-width: 100%;
-            height: auto;
-            margin-top: 20px;
-            border-radius: 8px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Employee Page</h1>
-        <div class="image-container">
-            <!-- Add a relevant image for the service -->
-            <img src="../../docs/index/Customer.jpg" alt="Corporate Bus Pooling" class="customer-image" style="max-width: 50%; height: auto;">
-        </div>
         <a href="calendar.html" class="btn">Calendar</a>
         <a href="timing.html" class="btn">Timing</a>
         <a href="hotspots.html" class="btn">Hotspots</a>
