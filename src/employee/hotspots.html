@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Hotspots</title>
+    <style>
+        .hotspot {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select up to 3 Hotspots</h1>
+    <form id="hotspotForm">
+        <div id="hotspotList"></div>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const admins = JSON.parse(localStorage.getItem("users")) || [];
+            const hotspotList = document.getElementById("hotspotList");
+            let allHotspots = new Set();
+
+            admins.forEach(admin => {
+                if (admin.role === "admin" && admin.hotspots) {
+                    admin.hotspots.forEach(hotspot => allHotspots.add(hotspot));
+                }
+            });
+
+            allHotspots.forEach((hotspot, index) => {
+                const hotspotDiv = document.createElement("div");
+                hotspotDiv.classList.add("hotspot");
+                hotspotDiv.innerHTML = `
+                    <input type="checkbox" id="hotspot${index}" name="hotspot" value="${hotspot}">
+                    <label for="hotspot${index}">${hotspot}</label>
+                `;
+                hotspotList.appendChild(hotspotDiv);
+            });
+        });
+
+        document.getElementById("hotspotForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const checkedBoxes = document.querySelectorAll('input[name="hotspot"]:checked');
+
+            if (checkedBoxes.length > 3) {
+                alert("You can only select up to 3 hotspots.");
+                return;
+            }
+
+            const selectedHotspots = Array.from(checkedBoxes).map(box => box.value);
+            localStorage.setItem("selectedHotspots", JSON.stringify(selectedHotspots));
+            alert("Hotspots saved successfully!");
+        });
+    </script>
+</body>
+</html>
