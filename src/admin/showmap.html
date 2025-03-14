@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps Embed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        .hotspot-box {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .hotspot {
+            padding: 5px 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .hotspot button {
+            margin-left: 5px;
+            cursor: pointer;
+            border: none;
+            background: red;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .form-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .form-container input {
+            padding: 5px 10px;
+            margin: 5px;
+        }
+        iframe {
+            width: 80%;
+            height: 450px;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>My Google Map</h2>
+    <iframe id="mapFrame" width="600" height="450" frameborder="0" style="border:0" title="neushoorn maps"></iframe>
+    <div id="travel-info"></div>
+    <div id="map-container"></div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiNShtoakde7DND2RWroZLuRIwb5isgT8&callback=initMap"></script>
+    <script src="map.js"></script>
+    <script>
+        function openMap(hotspots) {
+            const url = new URL('showmap.html', window.location.href);
+            url.searchParams.set('hotspots', hotspots);
+            window.open(url, '_blank');
+        }
+        
+        // Usage Example
+        getTravelTime("antwerpen", "haasrode industriterrein", api_Key)
+            .then(time => console.log(`Travel Time: ${time} minutes`))
+            .catch(error => console.error(error));
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let hotspots = urlParams.get('hotspots') ? urlParams.get('hotspots').split(',') : [];
+        hotspots.push('Haasrode');
+
+
+        if (hotspots.length > 1) {
+            const start = hotspots[0];
+            const destination = hotspots[hotspots.length - 1];
+            let waypoints = hotspots.slice(1, -1);
+            if (waypoints.length === 0) {
+            waypoints = [start];
+            }
+            setMapSrc(start, destination, waypoints, 'driving');
+        } else if (hotspots.length === 1) {
+            const start = hotspots[0];
+            const waypoints = [start];
+            setMapSrc(start, start, waypoints, 'driving');
+        } else {
+            console.error('Not enough hotspots provided.');
+        }
+        
+    </script>
+</body>
+</html>
