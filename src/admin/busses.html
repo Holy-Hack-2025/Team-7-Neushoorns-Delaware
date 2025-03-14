@@ -60,7 +60,6 @@
     <h1>Registered Users</h1>
     <div class="tabs">
         <div class="tab active" onclick="showTab('users')">Users</div>
-        <div class="tab" onclick="showTab('admins')">Admins</div>
     </div>
     <div id="users" class="tab-content active">
         <div class="date-picker">
@@ -93,19 +92,6 @@
             </table>
         </div>
     </div>
-    <div id="admins" class="tab-content">
-        <table>
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Hotspots</th>
-                </tr>
-            </thead>
-            <tbody id="adminsTableBody">
-                <!-- Admins will be added here dynamically -->
-            </tbody>
-        </table>
-    </div>
     <button type="button" onclick="window.location.href='index.html'">Back</button>
     <script>
         function showTab(tabId) {
@@ -122,28 +108,17 @@
         function loadUsers() {
             const users = JSON.parse(localStorage.getItem("users")) || [];
             const usersTableBody = document.getElementById("usersTableBody");
-            const adminsTableBody = document.getElementById("adminsTableBody");
 
             usersTableBody.innerHTML = ""; // Clear previous entries
-            adminsTableBody.innerHTML = ""; // Clear previous entries
 
             users.forEach(user => {
                 const row = document.createElement("tr");
-                if (user.role === 'admin') {
-                    user.hotspots = user.hotspots || [];
-                    row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.hotspots.length > 0 ? user.hotspots.join(", ") : "None"}</td>
-                    `;
-                    adminsTableBody.appendChild(row);
-                } else {
-                    user.selectedHotspots = user.selectedHotspots || [];
-                    row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.selectedHotspots.length > 0 ? user.selectedHotspots.join(", ") : "None"}</td>
-                    `;
-                    usersTableBody.appendChild(row);
-                }
+                user.selectedHotspots = user.selectedHotspots || [];
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.selectedHotspots.length > 0 ? user.selectedHotspots.join(", ") : "None"}</td>
+                `;
+                usersTableBody.appendChild(row);
             });
         }
 
