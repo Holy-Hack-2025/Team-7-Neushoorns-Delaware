@@ -3,34 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Users</title>
+    <title>View Admins</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
-        }
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-bottom: none;
-            background-color: #f1f1f1;
-        }
-        .tab.active {
-            background-color: #007BFF;
-            color: white;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
         }
         table {
             width: 80%;
@@ -80,32 +58,12 @@
     </style>
 </head>
 <body>
-    <h1>Registered Users</h1>
-    <div class="tabs">
-        <div class="tab active" onclick="showTab('users')">Users</div>
-        <div class="tab" onclick="showTab('admins')">Admins</div>
-    </div>
-
-    <div id="users" class="tab-content active">
+    <h1>Registered Admins</h1>
+    <div id="admins">
         <table>
             <thead>
                 <tr>
                     <th>Username</th>
-                    <th>Bus Usage Days</th>
-                </tr>
-            </thead>
-            <tbody id="usersTableBody">
-                <!-- Users will be added here dynamically -->
-            </tbody>
-        </table>
-    </div>
-
-    <div id="admins" class="tab-content">
-        <table>
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Bus Usage Days</th>
                     <th>Hotspots</th>
                 </tr>
             </thead>
@@ -116,42 +74,25 @@
     </div>
 
     <div class="form-container">
-        <h2>Add Hotspot to Admin</h2>
-        <input type="text" id="adminUsername" placeholder="Admin Username">
+        <h2>Add Hotspot</h2>
         <input type="text" id="newHotspot" placeholder="New Hotspot">
         <button onclick="addHotspot()">Add Hotspot</button>
     </div>
     <button type="button" onclick="window.location.href='index.html'">Back</button>
     <script>
-        function showTab(tabId) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
-            document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
-        }
-
         function loadUsers() {
             const users = JSON.parse(localStorage.getItem("users")) || [];
-            const usersTableBody = document.getElementById("usersTableBody");
             const adminsTableBody = document.getElementById("adminsTableBody");
-
-            usersTableBody.innerHTML = ""; 
-            adminsTableBody.innerHTML = ""; 
+            adminsTableBody.innerHTML = "";
 
             users.forEach(user => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${user.username}</td>
-                    <td>${user.busUsage ? user.busUsage.join(", ") : "None"}</td>
-                `;
-
                 if (user.role === 'admin') {
-                    const hotspotsCell = document.createElement("td");
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${user.username}</td>
+                    `;
 
+                    const hotspotsCell = document.createElement("td");
                     const hotspotBox = document.createElement("div");
                     hotspotBox.classList.add("hotspot-box");
 
@@ -168,29 +109,25 @@
                     hotspotsCell.appendChild(hotspotBox);
                     row.appendChild(hotspotsCell);
                     adminsTableBody.appendChild(row);
-                } else {
-                    usersTableBody.appendChild(row);
                 }
             });
         }
 
         function addHotspot() {
-            const username = document.getElementById("adminUsername").value;
             const newHotspot = document.getElementById("newHotspot").value;
 
-            if (!username || !newHotspot) {
-                alert("Please provide both admin username and hotspot.");
+            if (!newHotspot) {
+                alert("Please provide a hotspot.");
                 return;
             }
 
             const users = JSON.parse(localStorage.getItem("users")) || [];
-            const user = users.find(user => user.username === username && user.role === 'admin');
+            const user = users.find(user => user.role === 'admin');
 
             if (user) {
                 user.hotspots = user.hotspots || [];
                 user.hotspots.push(newHotspot);
                 localStorage.setItem("users", JSON.stringify(users));
-                document.getElementById("adminUsername").value = "";
                 document.getElementById("newHotspot").value = "";
                 loadUsers();
             } else {

@@ -57,146 +57,41 @@
     </style>
 </head>
 <body>
-    <h1>Registered Users</h1>
-    <div class="tabs">
-        <div class="tab active" onclick="showTab('users')">Users</div>
-        <div class="tab" onclick="showTab('admins')">Admins</div>
-    </div>
-    <div id="users" class="tab-content active">
-        <div class="date-picker">
-            <label for="date">Select Date: </label>
-            <input type="date" id="date" onchange="filterUsersByDate()">
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Selected Hotspots</th>
-                </tr>
-            </thead>
-            <tbody id="usersTableBody">
-                <!-- Users will be added here dynamically -->
-            </tbody>
-        </table>
-        <div class="hotspot-counter">
-            <h2>Hotspot Count for Selected Date</h2>
+    <header>
+        <h1>Admin Panel - Busses</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Bus List</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Hotspot</th>
-                        <th>Number of Clients</th>
+                        <th>Bus ID</th>
+                        <th>Route</th>
+                        <th>Driver</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
-                <tbody id="hotspotCounterBody">
-                    <!-- Hotspot counts will be added here dynamically -->
+                <tbody>
+                    <!-- Bus data will be populated here -->
                 </tbody>
             </table>
-        </div>
-    </div>
-    <div id="admins" class="tab-content">
-        <table>
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Hotspots</th>
-                </tr>
-            </thead>
-            <tbody id="adminsTableBody">
-                <!-- Admins will be added here dynamically -->
-            </tbody>
-        </table>
-    </div>
-
-    <button type="button" onclick="window.location.href='index.html'">Back</button>
-
-    <script>
-        function showTab(tabId) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
-            document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
-        }
-
-        function loadUsers() {
-            const users = JSON.parse(localStorage.getItem("users")) || [];
-            const usersTableBody = document.getElementById("usersTableBody");
-            const adminsTableBody = document.getElementById("adminsTableBody");
-
-            usersTableBody.innerHTML = ""; // Clear previous entries
-            adminsTableBody.innerHTML = ""; // Clear previous entries
-
-            users.forEach(user => {
-                const row = document.createElement("tr");
-                if (user.role === 'admin') {
-                    // Ensure hotspots is always an array
-                    user.hotspots = user.hotspots || [];
-                    // Add hotspots column for admins
-                    row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.hotspots.length > 0 ? user.hotspots.join(", ") : "None"}</td>
-                    `;
-                    adminsTableBody.appendChild(row);
-                } else {
-                    // Ensure selectedHotspots is always an array
-                    user.selectedHotspots = user.selectedHotspots || [];
-                    // Add selected hotspots column for users
-                    row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.selectedHotspots.length > 0 ? user.selectedHotspots.join(", ") : "None"}</td>
-                    `;
-                    usersTableBody.appendChild(row);
-                }
-            });
-        }
-
-        function filterUsersByDate() {
-            const selectedDate = document.getElementById("date").value;
-            const users = JSON.parse(localStorage.getItem("users")) || [];
-            const usersTableBody = document.getElementById("usersTableBody");
-            const hotspotCounterBody = document.getElementById("hotspotCounterBody");
-
-            usersTableBody.innerHTML = ""; // Clear previous entries
-            hotspotCounterBody.innerHTML = ""; // Clear previous hotspot counts
-
-            const hotspotCounts = {}; // Object to count hotspots
-
-            users.forEach(user => {
-                if (user.busUsage && user.busUsage.includes(selectedDate)) {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.selectedHotspots ? user.selectedHotspots.join(", ") : "None"}</td>
-                    `;
-                    usersTableBody.appendChild(row);
-
-                    // Count hotspots for the selected date
-                    if (user.selectedHotspots) {
-                        user.selectedHotspots.forEach(hotspot => {
-                            if (!hotspotCounts[hotspot]) {
-                                hotspotCounts[hotspot] = 0;
-                            }
-                            hotspotCounts[hotspot]++;
-                        });
-                    }
-                }
-            });
-
-            // Display hotspot counts
-            for (const [hotspot, count] of Object.entries(hotspotCounts)) {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${hotspot}</td>
-                    <td>${count}</td>
-                `;
-                hotspotCounterBody.appendChild(row);
-            }
-        }
-
-        window.onload = loadUsers;
-    </script>
+        </section>
+        <section>
+            <h2>Add New Bus</h2>
+            <form id="addBusForm">
+                <label for="busId">Bus ID:</label>
+                <input type="text" id="busId" name="busId" required>
+                <label for="route">Route:</label>
+                <input type="text" id="route" name="route" required>
+                <label for="driver">Driver:</label>
+                <input type="text" id="driver" name="driver" required>
+                <label for="status">Status:</label>
+                <input type="text" id="status" name="status" required>
+                <button type="submit">Add Bus</button>
+            </form>
+        </section>
+    </main>
+    <script src="scripts.js"></script>
 </body>
-</html>
+</html></html>
