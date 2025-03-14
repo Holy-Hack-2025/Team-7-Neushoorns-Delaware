@@ -4,14 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Hotspots</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .hotspot-list {
+            margin: 20px 0;
+            text-align: left;
+        }
+        .hotspot-list div {
+            margin-bottom: 10px;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Select Your Hotspots</h1>
-    <div class="hotspot-list" id="hotspotList">
-        <!-- Hotspots will be added here dynamically -->
+    <div class="container">
+        <style>
+            body {
+            background-image: url('../../docs/index/busstop.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            }
+        </style>
+        <h1>Select Your Hotspots</h1>
+        <div class="hotspot-list" id="hotspotList">
+            <!-- Hotspots will be added here dynamically -->
+        </div>
+        <button onclick="submitSelection()">Submit Selection</button>
+        <button type="button" onclick="window.location.href='index.html'">Back</button>
     </div>
-    <button onclick="submitSelection()">Submit Selection</button>
-    <button type="button" onclick="window.location.href='index.html'">Back</button>
 
     <script>
         function loadHotspots() {
