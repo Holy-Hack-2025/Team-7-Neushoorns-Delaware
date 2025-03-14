@@ -30,6 +30,10 @@
             font-weight: bold;
             margin-right: 10px;
         }
+        .weekday {
+            font-weight: bold;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -50,6 +54,8 @@
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         ];
+        
+        const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
         // Populate month selector
         function populateMonthSelector() {
@@ -63,7 +69,7 @@
             monthSelector.value = new Date().getMonth() + 1; // Set to current month
         }
 
-        // Generate days for the selected month
+        // Generate the calendar days with correct weekday alignment
         function generateDays() {
             const form = document.getElementById('busUsageForm');
             form.innerHTML = ""; // Clear previous days
@@ -72,6 +78,24 @@
             const currentYear = new Date().getFullYear();
             const daysInMonth = new Date(currentYear, selectedMonth, 0).getDate();
 
+            // Add weekdays headers
+            weekdays.forEach(day => {
+                const weekdayHeader = document.createElement('div');
+                weekdayHeader.className = 'weekday';
+                weekdayHeader.textContent = day;
+                form.appendChild(weekdayHeader);
+            });
+
+            // Find the starting weekday of the first day of the month
+            const firstDayOfMonth = new Date(currentYear, selectedMonth - 1, 1).getDay();
+
+            // Add empty cells before the first day of the month
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptyCell = document.createElement('div');
+                form.appendChild(emptyCell); // Empty cell before the start of the month
+            }
+
+            // Add the days of the month
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = `${currentYear}-${String(selectedMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`; // Format: YYYY-MM-DD
                 const label = document.createElement('label');
