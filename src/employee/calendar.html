@@ -23,22 +23,13 @@
             border-radius: 5px;
             background-color: #f9f9f9;
         }
-        .month-selector {
-            margin-bottom: 20px;
-        }
-        .month-selector label {
-            font-weight: bold;
-            margin-right: 10px;
+
         }
     </style>
 </head>
 <body>
     <h1>Select Days to Use the Bus</h1>
-    <div class="month-selector">
-        <label for="month">Select Month:</label>
-        <select id="month" onchange="generateDays()">
-            <!-- Months will be populated dynamically -->
-        </select>
+
     </div>
     <form id="busUsageForm" class="calendar">
         <!-- Days will be generated here -->
@@ -46,31 +37,6 @@
     <button type="button" onclick="saveBusUsage()">Save</button>
     <button type="button" onclick="window.location.href='index.html'">Back</button>
     <script>
-        const months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-
-        // Populate month selector
-        function populateMonthSelector() {
-            const monthSelector = document.getElementById("month");
-            months.forEach((month, index) => {
-                const option = document.createElement("option");
-                option.value = index + 1; // Months are 1-indexed
-                option.textContent = month;
-                monthSelector.appendChild(option);
-            });
-            monthSelector.value = new Date().getMonth() + 1; // Set to current month
-        }
-
-        // Generate days for the selected month
-        function generateDays() {
-            const form = document.getElementById('busUsageForm');
-            form.innerHTML = ""; // Clear previous days
-
-            const selectedMonth = document.getElementById("month").value;
-            const currentYear = new Date().getFullYear();
-            const daysInMonth = new Date(currentYear, selectedMonth, 0).getDate();
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = `${currentYear}-${String(selectedMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`; // Format: YYYY-MM-DD
@@ -132,9 +98,3 @@
                 return;
             }
 
-            populateMonthSelector();
-            generateDays();
-        };
-    </script>
-</body>
-</html>
