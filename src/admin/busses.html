@@ -58,12 +58,12 @@
 </head>
 <body>
     <h1>Registered Users</h1>
-    <div class="tabs">
+    <div class="tabs"></div>
         <div class="tab active" onclick="showTab('users')">Users</div>
         <div class="tab" onclick="showTab('admins')">Admins</div>
     </div>
-    <div id="users" class="tab-content active">
-        <div class="date-picker">
+    <div id="users" class="tab-content active"></div>
+        <div class="date-picker"></div>
             <label for="date">Select Date: </label>
             <input type="date" id="date" onchange="filterUsersByDate()">
         </div>
@@ -74,11 +74,11 @@
                     <th>Selected Hotspots</th>
                 </tr>
             </thead>
-            <tbody id="usersTableBody">
+            <tbody id="usersTableBody"></tbody>
                 <!-- Users will be added here dynamically -->
             </tbody>
         </table>
-        <div class="hotspot-counter">
+        <div class="hotspot-counter"></div>
             <h2>Hotspot Count for Selected Date</h2>
             <table>
                 <thead>
@@ -87,10 +87,18 @@
                         <th>Number of Clients</th>
                     </tr>
                 </thead>
-                <tbody id="hotspotCounterBody">
+                <tbody id="hotspotCounterBody"></tbody>
                     <!-- Hotspot counts will be added here dynamically -->
                 </tbody>
             </table>
+            <div class="bus-calculator">
+                <h2>Bus Calculator</h2>
+                <label for="busCapacity">Max Capacity of a Bus: </label>
+                <input type="number" id="busCapacity" min="1">
+                <button onclick="calculateBuses()">Calculate Buses</button>
+                <div id="busResult"></div>
+                <div id="busDistribution"></div>
+            </div>
         </div>
     </div>
     <div id="admins" class="tab-content">
@@ -101,7 +109,7 @@
                     <th>Hotspots</th>
                 </tr>
             </thead>
-            <tbody id="adminsTableBody">
+            <tbody id="adminsTableBody"></tbody>
                 <!-- Admins will be added here dynamically -->
             </tbody>
         </table>
@@ -186,6 +194,117 @@
                 `;
                 hotspotCounterBody.appendChild(row);
             }
+        }
+        function calculateBuses() {
+            const busCapacity = document.getElementById("busCapacity").value;
+            const hotspotCounterBody = document.getElementById("hotspotCounterBody");
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const selectedDate = document.getElementById("date").value;
+            let totalClients = 0;
+
+            hotspotCounterBody.querySelectorAll("tr").forEach(row => {
+            const count = parseInt(row.cells[1].innerText);
+            totalClients += count;
+            });
+
+            if (busCapacity > 0) {
+            const busesNeeded = Math.ceil(totalClients / busCapacity);
+            document.getElementById("busResult").innerText = `Minimum number of buses needed: ${busesNeeded}`;
+
+            const busDistribution = distributeUsersIntoBuses(users, selectedDate, busCapacity);
+            document.getElementById("busDistribution").innerHTML = busDistribution;
+            } else {
+            document.getElementById("busResult").innerText = "Please enter a valid bus capacity.";
+            }
+        }
+        function distributeUsersIntoBuses(users, selectedDate, busCapacity) {
+            let busDistribution = "";
+            let buses = [];
+
+            const hotspotGroups = groupUsersByHotspots(users, selectedDate);
+
+            // Sort hotspot groups by size in descending order
+            const sortedHotspotGroups = Object.entries(hotspotGroups).sort((a, b) => b[1].length - a[1].length);
+
+            // Initialize buses
+            let totalClients = 0;
+            sortedHotspotGroups.forEach(([hotspot, usersInHotspot]) => {
+            totalClients += usersInHotspot.length;
+            });
+            const totalBusesNeeded = Math.ceil(totalClients / busCapacity);
+
+            for (let i = 0; i < totalBusesNeeded; i++) {
+            buses.push({
+                clients: [],
+                hotspots: new Set(),
+                clientsCount: 0
+            });
+            }
+
+            // Distribute hotspot groups into buses
+            sortedHotspotGroups.forEach(([hotspot, usersInHotspot]) => {
+            let remainingUsersInHotspot = usersInHotspot.slice();
+            while (remainingUsersInHotspot.length > 0) {
+                let placed = false;
+                for (let bus of buses) {
+                if (bus.clientsCount + remainingUsersInHotspot.length <= busCapacity) {
+                    bus.clients.push(...remainingUsersInHotspot.map(user => user.username));
+                    bus.hotspots.add(hotspot);
+                    bus.clientsCount += remainingUsersInHotspot.length;
+                    remainingUsersInHotspot = [];
+                    placed = true;
+                    break;
+                }
+                }
+                if (!placed) {
+                // If no bus can fit the entire group, split the group and try again
+                let mostEmptyBus = buses.reduce((prev, curr) => prev.clientsCount < curr.clientsCount ? prev : curr);
+                const spaceLeft = busCapacity - mostEmptyBus.clientsCount;
+                const usersToPlace = remainingUsersInHotspot.splice(0, spaceLeft);
+                mostEmptyBus.clients.push(...usersToPlace.map(user => user.username));
+                mostEmptyBus.hotspots.add(hotspot);
+                mostEmptyBus.clientsCount += usersToPlace.length;
+                }
+            }
+            });
+
+            // Format bus distribution
+            buses.forEach((bus, index) => {
+            if (bus.clients.length > 0) {
+                busDistribution += formatBusDistribution(index + 1, bus.clients, bus.hotspots);
+            }
+            });
+
+            return busDistribution;
+        }
+
+        function groupUsersByHotspots(users, selectedDate) {
+            const hotspotGroups = {};
+            users.forEach(user => {
+            if (user.busUsage && user.busUsage.includes(selectedDate) && user.selectedHotspots && user.selectedHotspots.length > 0) {
+                user.selectedHotspots.forEach(hotspot => {
+                if (!hotspotGroups[hotspot]) {
+                    hotspotGroups[hotspot] = [];
+                }
+                hotspotGroups[hotspot].push(user);
+                });
+            }
+            });
+            return hotspotGroups;
+        }
+
+        function formatBusDistribution(busNumber, clients, hotspots) {
+            const hotspotList = Array.from(hotspots).join(", ");
+            return `
+                Bus ${busNumber}: ${clients.join(", ")} (Hotspots: ${hotspotList})<br>
+                <button onclick="openMap('${hotspotList}')">Show Map</button><br>
+            `;
+        }
+
+        function openMap(hotspots) {
+            const url = new URL('showmap.html', window.location.href);
+            url.searchParams.set('hotspots', hotspots);
+            window.open(url, '_blank');
         }
 
         window.onload = loadUsers;
